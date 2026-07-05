@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReelFind — Movie Search</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Karla:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="brand">REEL<span class="brand-mark--accent">FIND</span></div>
+
+  <!-- JS HOOK: on submit -> fetch TMDb /search/movie?query=... -> render results into [data-results-grid]
+       by cloning [data-movie-card-template] for each result (see RESULTS section below). -->
+  <form class="ticket-search" data-search-form>
+    <div class="ticket-search__stub">TICKET</div>
+    <input
+      type="text"
+      class="ticket-search__input"
+      data-search-input
+      placeholder="Search any movie…"
+      autocomplete="off"
+    >
+    <button type="submit" class="ticket-search__btn" data-search-btn aria-label="Search">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </form>
+</header>
+
+<!-- ============ HERO + FANNED DECK ============ -->
+<!-- JS HOOK: keep this deck showing ~5 featured/trending titles (e.g. from /movie/popular).
+     [data-position] on each .stack-card controls the fan (see styles.css header comment):
+     0 = front & active, 1-4 = stacked behind. On next/prev, add .is-leaving /
+     .is-leaving-reverse to the outgoing front card, then re-number data-position on the rest. -->
+<section class="hero" data-hero>
+
+  <!-- Deck + dots grouped into one wrapper so the grid treats them as a single
+       column-1 item — otherwise they land in separate auto-placed grid cells
+       and push .hero__info onto its own row, leaving column 2 empty. -->
+  <div class="hero__deck-column">
+    <div class="hero__deck-wrap">
+      <button class="deck-nav" data-prev-btn aria-label="Previous movie">‹</button>
+
+      <div class="stack-perspective">
+        <div class="stack" data-stack>
+
+          <article class="stack-card" data-position="0" data-movie-id="27205" tabindex="0">
+            <img class="stack-card__poster" src="https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg" alt="Inception poster">
+            <div class="stack-card__sheen"></div>
+          </article>
+
+          <article class="stack-card" data-position="1" data-movie-id="157336" tabindex="-1">
+            <img class="stack-card__poster" src="https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg" alt="Interstellar poster">
+            <div class="stack-card__sheen"></div>
+          </article>
+
+          <article class="stack-card" data-position="2" data-movie-id="155" tabindex="-1">
+            <img class="stack-card__poster" src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="The Dark Knight poster">
+            <div class="stack-card__sheen"></div>
+          </article>
+
+          <article class="stack-card" data-position="3" data-movie-id="496243" tabindex="-1">
+            <img class="stack-card__poster" src="https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" alt="Parasite poster">
+            <div class="stack-card__sheen"></div>
+          </article>
+
+          <article class="stack-card" data-position="4" data-movie-id="438631" tabindex="-1">
+            <img class="stack-card__poster" src="https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgJYuKZ7L4Uzr.jpg" alt="Dune poster">
+            <div class="stack-card__sheen"></div>
+          </article>
+
+        </div>
+      </div>
+
+      <button class="deck-nav" data-next-btn aria-label="Next movie">›</button>
+    </div>
+
+    <!-- JS HOOK: one dot per deck card; toggle .is-active to match whichever has data-position="0" -->
+    <div class="deck-dots" data-deck-dots>
+      <span class="deck-dot is-active"></span>
+      <span class="deck-dot"></span>
+      <span class="deck-dot"></span>
+      <span class="deck-dot"></span>
+      <span class="deck-dot"></span>
+    </div>
+  </div>
+
+  <!-- JS HOOK: keep this text in sync with whichever card is data-position="0" -->
+  <div class="hero__info">
+    <p class="hero__eyebrow">Now Featuring</p>
+    <h1 class="hero__title" data-hero-title>Inception</h1>
+
+    <div class="hero__meta" data-hero-meta>
+      <span class="chip chip--rating" data-hero-rating>★ 8.4</span>
+      <span class="chip" data-hero-year>2010</span>
+      <span class="chip">148 min</span>
+    </div>
+
+    <div class="hero__genres" data-hero-genres>
+      <span class="genre-tag">Sci-Fi</span>
+      <span class="genre-tag">Thriller</span>
+    </div>
+
+    <p class="hero__overview" data-hero-overview>
+      A thief who steals corporate secrets through dream-sharing technology
+      is given one last job: planting an idea instead of stealing one.
+    </p>
+
+    <div class="hero__actions">
+      <!-- JS HOOK: fetch /movie/{id}/videos, find a YouTube "Trailer", open the modal below
+           and set [data-modal-trailer-iframe] src to https://www.youtube.com/embed/{key}?autoplay=1 -->
+      <button class="btn btn--primary" data-play-trailer data-movie-id="27205">▶ Watch Trailer</button>
+      <button class="btn btn--ghost" data-more-info data-movie-id="27205">More Info</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BROWSE GRID (all movies, platform-style) ============ -->
+<!-- JS HOOK: this is the "browse everything" grid — populate it from /movie/popular
+     (default view) or from /search/movie results once the person searches.
+     For each movie: clone [data-movie-card-template], fill its [data-field] elements,
+     set data-movie-id on the clone, remove the "movie-card--template" class, append to
+     [data-results-grid]. Clicking any .movie-card (or pressing Enter while focused)
+     should open the modal further down with that movie's full details. -->
+<section class="results" data-results>
+
+  <div class="results__header">
+    <h2 class="results__title" data-results-title>Browse All</h2>
+    <span class="results__count" data-results-count>Showing popular titles</span>
+  </div>
+
+  <!-- JS HOOK: show while a fetch is in flight, hide the rest of the time -->
+  <div class="filmstrip-loader" data-loader hidden>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="results__grid" data-results-grid>
+
+    <!-- TEMPLATE — never shown directly (display:none via .movie-card--template).
+         JS clones this node, fills the four [data-field] spots, then unhides the clone. -->
+    <article class="movie-card movie-card--template" data-movie-card-template tabindex="0">
+      <div class="movie-card__poster-wrap">
+        <img class="movie-card__poster" data-field="poster" src="" alt="">
+        <span class="movie-card__rating" data-field="rating">★ 0.0</span>
+      </div>
+      <h3 class="movie-card__title" data-field="title"></h3>
+      <p class="movie-card__year" data-field="year"></p>
+    </article>
+
+    <!-- Demo tiles below stand in for real API results so the grid layout, hover-lift,
+         and click-to-open-modal behavior can be wired up before JS exists. Replace/remove
+         these once real data is rendering. -->
+
+   
+
+   
+   
+
+   
+
+   
+
+
+ 
+
+    
+  </div>
+
+  <!-- JS HOOK: show only when a search returns zero results; keep [data-results-grid] hidden meanwhile -->
+  <div class="results__empty" data-results-empty hidden>
+    <p class="results__empty-title">No matches found</p>
+    <p>Try another title or check the spelling.</p>
+  </div>
+
+</section>
+
+<!-- ============ MODAL: CURTAIN REVEAL (movie details + trailer) ============ -->
+<!-- JS HOOK: add class "is-open" to [data-modal] to open (curtain panels slide apart,
+     content fades in per styles.css). Before opening: fill every [data-modal-*] field
+     below from the clicked movie's data, and set [data-modal-trailer-iframe] src once
+     /movie/{id}/videos resolves (leave it hidden + show [data-modal-no-trailer] if none
+     exists). On close: remove "is-open", then clear the iframe src so the trailer stops. -->
+<div class="modal" data-modal id="movieModal">
+  <div class="modal__overlay" data-modal-close></div>
+
+  <div class="modal__stage">
+    <div class="curtain-panel curtain-panel--left"></div>
+    <div class="curtain-panel curtain-panel--right"></div>
+
+    <button class="modal__close" data-modal-close aria-label="Close">✕</button>
+
+    <div class="modal__content">
+      <div class="modal__backdrop" data-modal-backdrop style="background-image:url('https://image.tmdb.org/t/p/w780/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg')"></div>
+
+      <div class="modal__trailer-wrap" data-modal-trailer-wrap>
+        <iframe
+          class="modal__trailer"
+          data-modal-trailer-iframe
+          src=""
+          title="Movie trailer"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+          hidden
+        ></iframe>
+        <div class="modal__no-trailer" data-modal-no-trailer>No trailer available yet</div>
+      </div>
+
+      <div class="modal__details">
+        <h2 class="modal__title" data-modal-title>Movie Title</h2>
+
+        <div class="hero__meta" data-modal-meta>
+          <span class="chip chip--rating" data-modal-rating>★ 0.0</span>
+          <span class="chip" data-modal-year>Year</span>
+          <span class="chip" data-modal-runtime>Runtime</span>
+        </div>
+
+        <div class="hero__genres" data-modal-genres></div>
+
+        <p class="modal__overview" data-modal-overview>Overview text goes here.</p>
+        <p class="modal__cast" data-modal-cast>Cast: —</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  Data &amp; trailers via TMDb · Built by Maryam
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

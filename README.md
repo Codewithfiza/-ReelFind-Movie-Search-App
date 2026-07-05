@@ -47,4 +47,4 @@ A cinematic movie search app built with **vanilla HTML, CSS, and JavaScript**, p
 
 ---
 
-Built by Maryam ([@codewithfiza](https://github.com/codewithfiza)) · Movie data and trailers courtesy of [TMDb](https://www.themoviedb.org/)
+Built by fiza ([@codewithfiza](https://github.com/codewithfiza)) · Movie data and trailers courtesy of [TMDb](https://www.themoviedb.org/)
